@@ -1,13 +1,9 @@
 package com.nordryd.gamblybot.cardgames.entities;
 
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.List;
 
 import com.nordryd.gamblybot.cardgames.entities.Card.BattleResult;
 import com.nordryd.gamblybot.cardgames.entities.Card.Rank;
@@ -48,20 +44,6 @@ public class CardTest
     public void testBuilderNullRankAndSuit() {
         assertEquals("A card's rank cannot be null",
                 assertThrows(IllegalArgumentException.class, () -> Card.get(null).of(null)).getMessage());
-    }
-
-    @Test
-    public void testDraw() {
-        final int testingIterations = 100;
-        final List<Rank> possibleRanks = asList(Rank.values());
-        final List<Suit> possibleSuits = asList(Suit.values());
-        for (int testingIteration = 0; testingIteration < testingIterations; testingIteration++) {
-            final Card card = Card.draw();
-            assertTrue(possibleRanks.contains(card.getRank()),
-                    format("Card #%d had the impossible rank: %s", testingIteration, card.getRank()));
-            assertTrue(possibleSuits.contains(card.getSuit()),
-                    format("Card #%d had the impossible suit: %s", testingIteration, card.getRank()));
-        }
     }
 
     @Test

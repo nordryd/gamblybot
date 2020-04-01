@@ -1,4 +1,6 @@
 plugins {
+    id "org.springframework.boot" version "2.2.4.RELEASE"
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
     id "java"
 }
 
@@ -32,20 +34,24 @@ jar {
 }
 
 dependencies {
-    testRuntimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${depVersions.junit5}"
-    testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${depVersions.junit5}"
-    testImplementation group: "org.junit.vintage", name: "junit-vintage-engine", version: "${depVersions.junit5}"
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation group: "org.springframework.boot", name: "spring-boot-starter-web"
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation group: "io.cucumber", name: "cucumber-java8", version: "${depVersions.cucumber}"
     testImplementation group: "io.cucumber", name: "cucumber-junit", version: "${depVersions.cucumber}"
     testImplementation group: "org.mockito", name: "mockito-junit-jupiter", version: "${depVersions.mockitoJunit5}"
-}
-
-configurations {
-    cucumberRuntime {
-        extendsFrom testImplementation
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 }
 
 test {
     useJUnitPlatform()
+}
+
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
 }
