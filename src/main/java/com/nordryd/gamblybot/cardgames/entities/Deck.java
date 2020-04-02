@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
  * <p>
  * Represents a standard deck from which to draw {@link Card Cards}.
  * </p>
+ * <p>
+ * TODO change this to the standard deck to reduce the randomness of the cards and make it more realistic. can have more standard decks if there are enough players
+ * </p>
  *
  * @author Nordryd
  */

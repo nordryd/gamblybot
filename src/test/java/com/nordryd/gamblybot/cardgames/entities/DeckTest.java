@@ -6,7 +6,10 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.intThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Random;
@@ -41,19 +44,21 @@ public class DeckTest
     public void testDraw() {
         setupDraws();
         assertEquals(TO_BE_DRAWN, deck.draw());
+        verify(rng, times(2)).nextInt(anyInt());
     }
 
     @Test
     public void testDrawMultiple() {
         setupDraws();
         assertEquals(asList(TO_BE_DRAWN, TO_BE_DRAWN), deck.draw(2));
+        verify(rng, times(4)).nextInt(anyInt());
     }
 
     @Test
     public void testDrawMultipleSingle() {
         setupDraws();
         assertEquals(singletonList(TO_BE_DRAWN), deck.draw(1));
-        assertEquals(singletonList(TO_BE_DRAWN), deck.draw(1));
+        verify(rng, times(2)).nextInt(anyInt());
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.nordryd.gamblybot.cardgames.blackjack;
+package com.nordryd.gamblybot.cardgames.games.blackjack;
 
 /**
  * <p>
