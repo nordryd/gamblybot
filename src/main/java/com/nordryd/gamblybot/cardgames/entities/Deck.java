@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
  *
  * @author Nordryd
  */
-@Component
 public class Deck
 {
     private final Random rng;
