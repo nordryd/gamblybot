@@ -2,10 +2,13 @@ package com.nordryd.gamblybot;
 
 import java.util.Random;
 
+import com.nordryd.gamblybot.cardgames.entities.Deck;
+import com.nordryd.gamblybot.cardgames.games.blackjack.BlackjackHand;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -32,6 +35,7 @@ public class GamblyBot
      */
     @Configuration
     @EnableAutoConfiguration
+    @ComponentScan
     public static class Config
     {
         @Bean

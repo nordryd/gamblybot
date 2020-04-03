@@ -20,54 +20,127 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class BlackjackHand
 {
     private static final List<Rank> HAS_STRENGTH_OF_10 = asList(Rank.TEN, Rank.JACK, Rank.QUEEN, Rank.KING);
-    private static final int BLACKJACK_VALUE = 21;
-    private final List<Card> cards;
+    private static final int INITIAL_HAND_SIZE = 2, BLACKJACK_VALUE = 21, STRENGTH_OF_10 = 10, ACE_HIGH = 11, ACE_LOW = 1;
 
-    @Autowired
-    private Deck deck;
+    private final List<Card> cards;
+    private final Deck deck;
 
     private State state;
     private int value;
-    private boolean areAcesHigh;
+    private int aces;
+    private boolean acesAreHigh;
 
-    public BlackjackHand() {
+    /**
+     * Constructor.
+     *
+     * @param deck an instance of {@link Deck}.
+     */
+    @Autowired
+    public BlackjackHand(final Deck deck) {
+        this(deck, deck.draw());
+    }
+
+    private BlackjackHand(final Deck deck, final Card initialCard) {
         this.cards = new ArrayList<>();
-        hit();
+        this.deck = deck;
+        this.state = State.PLAYING;
+        this.value = 0;
+        this.aces = 0;
+        this.acesAreHigh = true;
+        updateHandValue(initialCard);
         hit();
     }
 
-    private BlackjackHand(final Card initialCard) {
-        this.cards = new ArrayList<>();
-        this.cards.add(initialCard);
-        hit();
-    }
-
+    /**
+     * Hits the hand.
+     */
     public void hit() {
-        areAcesHigh = value <= 10;
-    }
-
-    public void stay() {
-
-    }
-
-    public List<BlackjackHand> split() {
-        if (!cards.get(0).equals(cards.get(1))) {
-            throw new IllegalStateException(
-                    "split() was called on a hand that cannot be split! Both cards must be equal in value in order to split");
+        if (State.PLAYING.equals(state)) {
+            updateHandValue(deck.draw());
         }
-        return asList(new BlackjackHand(cards.get(0)), new BlackjackHand(cards.get(0)));
     }
 
+    /**
+     * The hand will stay.
+     */
+    public void stay() {
+        if (State.PLAYING.equals(state)) {
+            state = State.STAYING;
+        }
+    }
+
+    /**
+     * Splits the current hand.
+     *
+     * @return two new hands with the duplicate card as the initial card of both.
+     * @throws IllegalStateException if both initial cards are not equal in value.
+     */
+    public List<BlackjackHand> split() {
+        if (!canSplit()) {
+            throw new IllegalStateException("split() was called on a hand that cannot be split!\n" +
+                    "Both initially dealt cards must be equal in value in order to split.\n" + "The cards were:\n" +
+                    cards.get(0) + ", " + cards.get(1));
+        }
+        final Card initialCard = cards.get(0), otherInitialCard = cards.get(1);
+        return asList(new BlackjackHand(deck, initialCard), new BlackjackHand(deck,
+                !initialCard.equals(otherInitialCard) && HAS_STRENGTH_OF_10.contains(initialCard.getRank()) &&
+                        HAS_STRENGTH_OF_10.contains(otherInitialCard.getRank()) ? otherInitialCard : initialCard));
+    }
+
+    /**
+     * @return the {@link Card cards} currently in this hand.
+     */
     public List<Card> getCards() {
         return cards;
     }
 
+    /**
+     * @return the value of the hand.
+     */
     public int getValue() {
         return value;
     }
 
+    /**
+     * @return the hand's current {@link BlackjackHand.State state}.
+     */
     public State getState() {
         return state;
+    }
+
+    private void updateHandValue(final Card card) {
+        cards.add(card);
+        final Rank cardRank = card.getRank();
+        if (Rank.ACE.equals(cardRank)) {
+            aces++;
+            value += acesAreHigh ? ACE_HIGH : ACE_LOW;
+        }
+        else {
+            value += HAS_STRENGTH_OF_10.contains(cardRank) ? STRENGTH_OF_10 : cardRank.getStrength();
+        }
+
+        updateHandState();
+    }
+
+    private void updateHandState() {
+        if (value == BLACKJACK_VALUE) {
+            state = (cards.size() == INITIAL_HAND_SIZE) ? State.BLACKJACK : State.STAYING;
+        }
+        else if (value > BLACKJACK_VALUE) {
+            if (acesAreHigh && (aces > 0)) {
+                value = value - (aces * (ACE_HIGH - ACE_LOW));
+                updateHandState();
+            }
+            else {
+                state = State.BUSTED;
+            }
+        }
+    }
+
+    private boolean canSplit() {
+        final Rank cardRank1st = cards.get(0).getRank(), cardRank2nd = cards.get(1).getRank();
+        return cardRank1st.equals(cardRank2nd) ||
+                (HAS_STRENGTH_OF_10.contains(cardRank1st) && HAS_STRENGTH_OF_10.contains(cardRank2nd));
     }
 
     /**
