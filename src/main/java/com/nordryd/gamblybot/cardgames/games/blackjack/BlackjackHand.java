@@ -21,6 +21,7 @@ public class BlackjackHand
 {
     private static final List<Rank> HAS_STRENGTH_OF_10 = asList(Rank.TEN, Rank.JACK, Rank.QUEEN, Rank.KING);
     private static final int BLACKJACK_VALUE = 21;
+
     private final List<Card> cards;
 
     @Autowired
