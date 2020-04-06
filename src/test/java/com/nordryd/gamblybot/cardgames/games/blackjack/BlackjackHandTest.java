@@ -15,7 +15,6 @@ import com.nordryd.gamblybot.cardgames.entities.Card.Suit;
 import com.nordryd.gamblybot.cardgames.entities.Deck;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -211,9 +210,11 @@ public class BlackjackHandTest
     public void testSplitCannotBeSplit() {
         when(deck.draw()).thenReturn(QUEEN_OF_HEARTS).thenReturn(THREE_OF_CLUBS);
         final BlackjackHand hand = new BlackjackHand(deck);
-        assertEquals(
-                "split() was called on a hand that cannot be split! Both initially dealt cards must be equal in value in order to split.",
-                assertThrows(IllegalStateException.class, () -> hand.split()).getMessage());
+        assertEquals("split() was called on a hand that cannot be split!\n" +
+                        "Both initially dealt cards must be equal in value in order to split.\n" + "The cards were:\n" +
+                        "QUEEN of HEARTS, THREE of CLUBS",
+                assertThrows(IllegalStateException.class, () -> hand.split()).getMessage(),
+                "The exception was correct, but the message was not :(\n");
         verify(deck, times(2)).draw();
     }
 
