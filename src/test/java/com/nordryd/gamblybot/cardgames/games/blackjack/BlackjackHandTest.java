@@ -1,6 +1,7 @@
 package com.nordryd.gamblybot.cardgames.games.blackjack;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
@@ -210,11 +211,11 @@ public class BlackjackHandTest
     public void testSplitCannotBeSplit() {
         when(deck.draw()).thenReturn(QUEEN_OF_HEARTS).thenReturn(THREE_OF_CLUBS);
         final BlackjackHand hand = new BlackjackHand(deck);
-        assertEquals("split() was called on a hand that cannot be split!\n" +
+        assertThat(assertThrows(IllegalStateException.class, () -> hand.split()).getMessage())
+                .withFailMessage("The exception was correct, but the message was not :(\n").isEqualTo(
+                "split() was called on a hand that cannot be split!\n" +
                         "Both initially dealt cards must be equal in value in order to split.\n" + "The cards were:\n" +
-                        "QUEEN of HEARTS, THREE of CLUBS",
-                assertThrows(IllegalStateException.class, () -> hand.split()).getMessage(),
-                "The exception was correct, but the message was not :(\n");
+                        "QUEEN of HEARTS, THREE of CLUBS");
         verify(deck, times(2)).draw();
     }
 
@@ -273,8 +274,8 @@ public class BlackjackHandTest
 
     private void assertHand(final BlackjackHand hand, final BlackjackHand.State expectedState, final int expectedValue,
             final Card... expectedCards) {
-        assertEquals(expectedState, hand.getState());
-        assertEquals(expectedValue, hand.getValue());
-        assertEquals(asList(expectedCards), hand.getCards());
+        assertThat(hand.getState()).isEqualByComparingTo(expectedState);
+        assertThat(hand.getValue()).isEqualTo(expectedValue);
+        assertThat(hand.getCards()).containsAll(asList(expectedCards));
     }
 }
