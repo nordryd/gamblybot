@@ -33,7 +33,6 @@ public class Deck
      *
      * @param rng a {@link Random random number generator}.
      */
-    @Autowired
     public Deck(final Random rng) {
         this.cards = new ArrayList<>();
         this.rng = rng;
